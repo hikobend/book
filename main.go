@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,6 +40,8 @@ func main() {
 	r.GET("/books", getBooks)
 	// bookを追加
 	r.POST("/books", postBook)
+	// 指定したbookを表示する
+	r.GET("/books/:id", getBookById)
 
 	r.Run("localhost:8080")
 }
@@ -59,4 +62,20 @@ func postBook(c *gin.Context) {
 	// newBookを追加
 	books = append(books, newBook)
 	c.IndentedJSON(http.StatusCreated, newBook)
+}
+
+// 指定したbookを表示する
+func getBookById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return
+	}
+
+	for _, t := range books {
+		if t.ID == id {
+			c.IndentedJSON(http.StatusOK, t)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "not found"})
 }
