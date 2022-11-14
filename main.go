@@ -35,12 +35,28 @@ var books = []book{
 func main() {
 	r := gin.Default()
 
-	r.GET("/books", getbooks)
+	// 全てのbookを返すハンドラ
+	r.GET("/books", getBooks)
+	// bookを追加
+	r.POST("/books", postBook)
 
 	r.Run("localhost:8080")
 }
 
 // 全てのtodoを返すハンドラ
-func getbooks(c *gin.Context) {
+func getBooks(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, books)
+}
+
+func postBook(c *gin.Context) {
+	var newBook book
+
+	// リクエストボディをnewBookにバインド
+	if err := c.BindJSON(&newBook); err != nil {
+		return
+	}
+
+	// newBookを追加
+	books = append(books, newBook)
+	c.IndentedJSON(http.StatusCreated, newBook)
 }
