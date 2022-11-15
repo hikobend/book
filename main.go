@@ -44,6 +44,8 @@ func main() {
 	r.GET("/books/:id", getBookById)
 	// bookを更新するハンドラ
 	r.PATCH("/books/:id", patchBook)
+	// 削除ハンドラ
+	r.DELETE("/todos/:id", deleteBook)
 
 	r.Run("localhost:8080")
 }
@@ -107,4 +109,23 @@ func patchBook(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "todo not found"})
+}
+
+// Bookを削除するハンドラ
+func deleteBook(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return
+	}
+
+	for i, t := range books {
+		if t.ID == id {
+			// 指定されたIDのbookをbooksから削除
+			books = append(books[:i], books[i+1:]...)
+			c.IndentedJSON(http.StatusOK, gin.H{"message": "book(" + strconv.Itoa(id) + ") is deleted"})
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
 }

@@ -27,3 +27,8 @@ curl http://localhost:8080/books/2 \
 --request "PATCH" \
 --data '{"title": "XXX","author": "YYY"}'
 ````
+
+````
+curl http://localhost:8080/todos/2 \
+--request "DELETE"
+````
