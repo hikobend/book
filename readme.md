@@ -19,3 +19,11 @@ curl http://localhost:8080/books/1 \
 --request "GET" \
 --data '{"id": 1}'
 ````
+
+````
+curl http://localhost:8080/books/2 \
+--include \
+--header "Content-Type: application/json" \
+--request "PATCH" \
+--data '{"title": "XXX","author": "YYY"}'
+````

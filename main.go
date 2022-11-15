@@ -42,6 +42,8 @@ func main() {
 	r.POST("/books", postBook)
 	// 指定したbookを表示する
 	r.GET("/books/:id", getBookById)
+	// bookを更新するハンドラ
+	r.PATCH("/books/:id", patchBook)
 
 	r.Run("localhost:8080")
 }
@@ -66,6 +68,8 @@ func postBook(c *gin.Context) {
 
 // 指定したbookを表示する
 func getBookById(c *gin.Context) {
+	// URLからidを取得
+	// strconv.Atoi()を利用して、idを文字列から数値に変換
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return
@@ -78,4 +82,29 @@ func getBookById(c *gin.Context) {
 		}
 	}
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "not found"})
+}
+
+// 更新するハンドラ
+func patchBook(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return
+	}
+
+	var book book
+	book.ID = id
+	// JSONのリクエストボディをバインド
+	if err = c.BindJSON(&book); err != nil {
+		return
+	}
+
+	for i, t := range books {
+		if t.ID == id {
+			books[i] = book
+			c.IndentedJSON(http.StatusOK, book)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "todo not found"})
 }
